@@ -1,0 +1,452 @@
+\documentclass{article}
+
+\usepackage{svn-multi}
+\svnid{$Id: ejercicios-cortos.tex 1638 2017-02-07 12:39:10Z xmc $}
+
+\usepackage[a4paper]{geometry}
+
+\setlength{\parskip}{1.25ex}
+
+\usepackage[utf8]{inputenc}
+
+\usepackage{hyperref}
+
+\usepackage{xcolor}
+
+\usepackage{../../share/tex/cc}
+\usepackage{../../share/tex/notacion-ctads}
+
+% \usepackage{graphics} % Or
+% \usepackage{graphicx} %% and then \includegraphics[scale=0.5,...]{filename}
+
+\usepackage[spanish]{babel}
+%\usepackage[spanish,english]{babel}
+
+% \usepackage{url}
+
+% \usepackage{fancybox}
+\usepackage{fancyhdr}
+
+% \usepackage{courier}
+% \usepackage{times}
+% \usepackage{fourier}
+\usepackage{charter}
+
+\title{
+  Cuadernillo de ejercicios cortos\\
+  \asignatura.
+  %\convocatoria\
+  Curso~\curso
+}
+
+\author{Ángel Herranz \and Julio Mariño}
+\date{Versión \svnrev.\\Última actualización: \svndate.}
+
+\begin{document}
+\pagestyle{fancy}
+\lhead{Hoja de ejercicios cortos (r\svnrev)}
+\chead{\asignatura}
+\rhead{\convocatoria\ \curso}
+\lfoot{}
+\cfoot{\thepage}
+\rfoot{}
+
+\maketitle
+
+\noindent
+Este documento contiene los enunciados de los ejercicios que los
+alumnos deben entregar cada semana en la asignatura de Concurrencia.
+La entrega se realizará a través de la página
+\url{http://lml.ls.fi.upm.es/entrega}. Es obligatorio entregar fichero
+Java con codificación de caracteres UTF-8 (configura para ello tu
+editor o entorno de desarrollo favorito).
+
+\noindent\textbf{Nota:} cuidado al copiar y pegar código de este PDF,
+puede que el resultado no sea el esperado en el editor.
+
+\tableofcontents
+
+\lstset{
+  style=code,
+  language=Java,
+  frame=single,
+  xleftmargin=2mm,
+  xrightmargin=2mm,
+  backgroundcolor=\color{lightgray},
+}
+
+\clearpage
+\section{Creación de threads en Java}
+Con lo visto en clase y la documentación sobre concurrencia en los
+tutoriales de Java
+(\url{http://docs.oracle.com/javase/tutorial/essential/concurrency/},
+se pide escribir un programa concurrente en Java que arranque $N$
+threads y termine cuando los $N$ threads terminen. Todos los threads
+deben realizar el mismo trabajo: imprimir una línea que los
+identifique y distinga (no se permite el uso de
+\lstinline{Thread.currentThread()} ni los métodos \lstinline{getId()}
+o \lstinline{toString()} o \lstinline{getName()} de la clase
+\lstinline{Thread}), dormir durante $T$ milisegundos y terminar
+imprimiendo una línea que los identifique y distinga. El \emph{thread}
+principal, además de poner en marcha todos los procesos, debe imprimir
+una línea avisando de que todos los threads han terminado una vez que
+lo hayan hecho.
+
+Es un ejercicio muy sencillo que debe servir para jugar con el
+concepto de proceso intentando distinguir lo que cada proceso hace y
+el momento en el que lo hace. Además, se podrá observar cómo cada
+ejecución lleva a resultados diferentes. Se sugiere jugar con los
+valores $N$ y $T$ e incluso hacer que $T$ sea distinto para cada
+proceso.
+
+\subsection*{Material a entregar}
+El fichero fuente a entregar debe llamarse \url{CC_01_Threads.java}
+
+\clearpage
+\section{Provocar una condición de carrera}
+Este ejercicio consiste en escribir un programa concurrente en el que
+múltiples threads compartan y modifiquen una variable de tipo int de
+forma que el resultado final de la variable una vez que los threads
+terminan no sea el valor esperado. Seamos más concretos. Tendremos dos
+tipos de procesos, decrementadores e incrementadores que realizan $N$
+decrementos e incrementos, respectivamente, sobre una misma variable
+(\lstinline{n}) de tipo \lstinline{int} inicializada a 0. El programa
+concurrente pondrá en marcha $M$ procesos de cada tipo y una vez que
+todos los threads han terminado imprimirá el valor de la variable
+compartida.
+
+El valor final de la variable debería ser 0 ya que se habrán producido
+$M\times N$ decrementos (\lstinline{n--}) y $M\times N$ incrementos
+(\lstinline{n++}), sin embargo, si dos operaciones (tanto de
+decremento como de incremento) se realizan a la vez el resultado puede
+no ser el esperado (por ejemplo, dos incrementos podrían terminar por no
+incrementar la variable en 2).
+
+El alumno no debería realizar la entrega hasta que no vea que el valor
+final de la variable puede ser distinto de 0 (aunque esto no garantiza
+que haya una condición de carrera).
+
+\subsection*{Material a entregar}
+El fichero fuente a entregar debe llamarse \url{CC_02_Carrera.java}.
+
+\clearpage
+
+\section{Garantizar exclusión mutua con espera activa}
+Este ejercicio consiste en evitar la condición de carrera que se
+produjo en el ejercicio anterior. Para ello supondremos la existencia
+de \textbf{sólo dos procesos}, que simultáneamente ejecutan sendos
+bucles de $N$ pasos incrementando y decrementando, respectivamente, en
+cada paso una variable compartida (la operación de incremento y la de
+decremento sobre esa misma variable compartida son secciones
+críticas). El objetivo es evitar que mientras un proceso modifica la
+variable el otro haga lo mismo (propiedad que se denomina exclusión
+mutua: no puede haber dos procesos modificando simultáneamente esa
+variable) y el objetivo es hacerlo utilizando sólo nuevas variables y
+``espera activa'' (en otras palabras, está prohibido utilizar métodos
+synchronized, semáforos o cualquier otro mecanismo de concurrencia).
+
+\subsection*{Material a entregar}
+El fichero fuente a entregar debe llamarse \url{CC_03_MutexEA.java}.
+
+\subsection*{Material de apoyo}
+Se ofrece un \textbf{intento
+fallido} para asegurar la exclusión mutua en la ejecución de las
+secciones críticas en el fichero \url{CC_03_MutexEA.todo.java}:
+\lstinputlisting{CC_03_MutexEA.todo.java}
+
+\clearpage
+\section{Garantizar exclusión mutua con semáforos}
+Este ejercicio, al igual que el anterior, consiste en evitar una
+condición de carrera. En esta ocasión tenemos el mismo número de
+procesos incrementadores que decrementadores que incrementan y
+decrementan, respectivamente, en un mismo número de pasos una variable
+compartida. El objetivo es asegurar la exclusión mutua en la ejecución
+de los incrementos y decrementos de la variable y el objetivo es
+hacerlo utilizando exclusivamente un semáforo de la clase
+\lstinline{es.upm.babel.cclib.Semaphore} (está prohibido utilizar cualquier otro
+mecanismo de concurrencia). La librería de concurrencia \url{cclib.jar}
+puede descargarse de la página web de la asignatura.
+
+\subsection*{Material a entregar}
+El fichero fuente a entregar debe llamarse \url{CC_04_MutexSem.java}.
+
+\subsection*{Material de apoyo}
+Se ofrece el fichero \url{CC_04_MutexSem.todo.java} con un esqueleto
+que debe respetarse y que muestra una condición de carrera:
+\lstinputlisting{CC_04_MutexSem.todo.java}
+
+\clearpage
+\section{Almacén de un dato con semáforos}
+En este caso nos enfrentamos a un típico programa de concurrencia:
+productores-consumidores. Existen procesos de dos tipos diferentes:
+\begin{itemize}
+\item Productores: su hilo de ejecución consiste, repetidamente, en
+  crear un producto (ver la clase \lstinline{es.upm.babel.cclib.Producto}) y
+  hacerlo llegar a uno de los consumidores.
+\item Consumidores: su hilo de ejecución consiste, repetidamente,
+  recoger productos producidos por los productores y consumirlos.
+\end{itemize}
+Las clases que implementan ambos threads forman parte de la librería
+CCLib:
+\newline
+\lstinline{es.upm.babel.cclib.Productor} y
+\lstinline{es.upm.babel.cclib.Consumidor}.
+
+La comunicación entre productores y consumidores se realizará a través
+de un ``almacén'' compartido por todos los procesos. Dicho objeto
+respetará la interfaz \lstinline{es.upm.babel.cclib.Almacen}:
+\lstinputlisting{../../../lib/cclib/es/upm/babel/cclib/Almacen.java}
+
+Se pide implementar sólo con semáforos una clase que siga dicha
+interfaz. Sólo puede haber almacenado como máximo un producto, si un
+proceso quiere almacenar debe esperar hasta que no haya un producto y
+si un proceso quiera extraer espere hasta que haya un
+producto. Téngase en cuenta además los posible problemas de no
+asegurar la exclusión mutua en el acceso a los atributos
+compartidos.
+
+\subsection*{Material a entregar}
+El fichero fuente a entregar debe llamarse \url{Almacen1.java}.
+
+\subsection*{Material de apoyo}
+Se ofrece un esqueleto de código que el alumno debe completar en el fichero
+\url{Almacen1.todo.java}:
+\lstinputlisting{Almacen1.todo.java}
+
+El programa principal \url{CC_05_P1CSem.java} es el siguiente:
+\lstinputlisting{CC_05_P1CSem.java}
+
+Para valorar si el problema está bien resuelto, os recordamos que el
+objetivo es asegurar
+\begin{enumerate}
+\item que todos los productos producidos acaban por ser consumidos,
+\item que no se consume un producto dos veces y
+\item que no se consume ningún producto no válido (null, por ejemplo).
+\end{enumerate}
+
+\noindent\textbf{Recomendación:} jugar con los valores de número de
+productores y número de consumidores y observar con atención las
+trazas del programa.
+
+\clearpage
+\section{Almacén de varios datos con semáforos}
+Este ejercicio es una variación del problema anterior. En esta
+ocasión, el almacén a implementar tiene una capacidad de hasta $N$
+productos, lo que permite a los productores seguir trabajando aunque
+los consumidores se vuelvan, momentáneamente, lentos.
+
+\subsection*{Material a entregar}
+El fichero fuente a entregar debe llamarse \url{AlmacenN.java}.
+
+\subsection*{Material de apoyo}
+Se ofrece un esqueleto de código que el alumno debe completar en el fichero
+\url{AlmacenN.todo.java}:
+\lstinputlisting{AlmacenN.todo.java}
+
+y el programa principal \url{CC_06_PNSem.java} es el siguiente:
+\lstinputlisting{CC_06_PNCSem.java}
+
+\clearpage
+\section{Especificación de un recurso compartido}
+El ejercicio consiste en \textbf{elaborar la especificación formal del
+  recurso compartido ControlAccesoPuente}. El recurso compartido forma
+parte de un programa concurrente que gestiona los accesos y salidas de
+coches de un puente de un solo carril. El puente tiene dos entradas y
+dos salidas.  Los coches que entran por la entrada sur salen por la
+salida norte y viceversa. En cada entrada existe un detector y una
+barrera. En cada salida existe un detector. El sistema de detección y
+barreras tienen el interfaz de control \url{Puente.java}\footnote{Los
+  comentarios tipo TODO no significan que el alumno tenga que
+  implementar nada, sólo son apuntes para disponer eventualmente de
+  una simulación.}:
+\lstinputlisting{Puente.java}
+
+El objetivo del programa concurrente es controlar la entrada y salida
+de vehículos de tal forma que jamás haya en el puente dos coches que
+pretenda dirigirse en sentido contrario.  Se ha decidido un diseño en
+el que existe un proceso por cada entrada y un proceso por cada
+salida. Los procesos comparten un recurso compartido que les sirve
+para comunicarse.
+
+A continuación se muestra el interfaz del recurso
+compartido que hay que especificar \linebreak (\url{ControlAccesoPuente.java}):
+\lstinputlisting{ControlAccesoPuente.java}
+y el programa concurrente \url{CC_07_Puente.java}:
+\lstinputlisting{CC_07_Puente.java}
+
+\clearpage
+\section{Multibuffer con métodos synchronized}
+El \emph{MultiBuffer} es una variación del problema del búffer
+compartido en el que productores y consumidores pueden insertar o
+extraer secuencias de elementos de longitud arbitraria, lo cual lo
+convierte en un ejemplo más realista. A diferencia de versiones más
+sencillas, este es un ejercicio de programación difícil si sólo se
+dispone de mecanismos de sincronización de bajo nivel
+(p.ej.~semáforos). 
+
+Por ello, os pedimos que lo implementéis en Java traduciendo la
+siguiente especificación de recurso a una clase usando métodos
+\emph{synchronized} y el mecanismo \texttt{wait()/notifyAll()}. 
+
+\begin{ctadsol}
+  \nombrectad{MultiBuffer}
+  \\
+  \operaciones
+  \operacion{Poner}{Tipo\_Secuencia[e]}
+  \operacion{Tomar}{\nat[e] \por Tipo\_Secuencia[s]}
+  \\
+  \semdom
+  \tipo{MultiBuffer = \secn{Tipo\_Dato} \\
+        Tipo\_Secuencia =  MultiBuffer}
+  \invariante{$\lng{\self} \leq MAX$}
+  \donde{$MAX = ...$}
+  \inicial{\self}{$\self = \secv$}
+  \\
+  \pre{$n \leq \lfloor MAX / 2 \rfloor$}
+  \cprenl{Hay suficientes elementos en el multibuffer}
+  \cpre{$\lng{\self} \geq n$}
+  \nomop{Tomar(n, s)}
+  \postnl{Retiramos elementos}
+  \post{$n = \lng{s\sal} \wedge \self\ent = s\sal \concat \self\sal$}
+  \\
+  \pre{$\lng{s} \leq \lfloor MAX / 2 \rfloor$}
+  \cprenl{Hay sitio en el buffer para dejar la secuencia}
+  \cpre{$\lng{\self+s} \leq MAX$}
+  \nomop{Poner(s)}
+  \postnl{Añadimos una secuencia al buffer}
+  \post{$\self\sal = \self\ent \concat s\ent$}
+\end{ctadsol}
+%
+Observad que la especificación contiene también precondiciones para
+evitar situaciones de interbloqueo. 
+
+\subsection*{Material a entregar}
+El fichero fuente a entregar debe llamarse \url{MultiAlmacenSync.java}.
+
+\subsection*{Material de apoyo}
+Se ofrece un esqueleto de código que el alumno debe completar en el fichero
+\url{MultiAlmacenSync.todo.java}:
+\lstinputlisting{MultiAlmacenSync.todo.java}
+
+El programa principal para probar este ejercicio es el
+\url{CC_08_PmultiCSync.java}: 
+\lstinputlisting{CC_08_PmultiCSync.java}
+
+\clearpage
+
+\section{Multibuffer con monitores}
+%% Aunque mucho folclore insiste en llamar monitores a los métodos
+%% synchronized y a los wait sets\footnote{Se recomienda leer el artículo
+%%   ``Java's Insecure Parallelism'' de Per Brinch Hansen, el creador de
+%%   los monitores.}, lo cierto es que el mecanismo más parecido a
+%% monitores del que dispone Java el mecanismo de cerrojos y colas
+%% explícitas de espera: \emph{locks \& conditions}
+%% (\url{http://docs.oracle.com/javase/tutorial/essential/concurrency/newlocks.html}).
+
+%% \subsection*{Versión con \emph{locks \& conditions}}
+%% En este ejercicio, la tarea consiste en resolver el problema anterior
+%% usando el mecanismo de cerrojos y colas de espera explícitas
+%% (\emph{locks \& conditions}).
+
+
+%% \subsubsection*{Material a entregar}
+%% El fichero fuente a entregar debe llamarse \url{MultiAlmacenLocks.java}.
+
+%% \subsubsection*{Material de apoyo}%
+%% Se ofrece un esqueleto de código que el alumno debe completar en el fichero
+%% \url{MultiAlmacenLocks.todo.java}:
+%% \lstinputlisting{MultiAlmacenLocks.todo.java}
+
+%% El programa principal para probar este ejercicio es el
+%% \url{CC_09_PmultiCLocks.java}: 
+%% \lstinputlisting{CC_09_PmultiCLocks.java}
+
+%% \subsection*{Versión con los monitores de la CCLib}
+%% Lamentablemente, la implementación de \emph{locks \& conditions} de
+%% Java no contempla la reentrada al monitor desde un \lstinline{await}
+%% de una \lstinline{Condition} (fruto de una ejecución de
+%% \lstinline{signal}) como prioritaria sobre las entradas externas al
+%% monitor.
+En esta versión del ejercicio, la tarea consiste en resolver
+el problema anterior usando las clases
+\lstinline{es.upm.babel.cclib.Monitor} y
+\lstinline{es.upm.babel.cclib.Monitor.Cond}.
+
+\subsubsection*{Material a entregar}
+El fichero fuente a entregar debe llamarse \url{MultiAlmacenMon.java}.
+
+\subsubsection*{Material de apoyo}%
+Se ofrece un esqueleto de código que el alumno debe completar en el fichero
+\url{MultiAlmacenMon.todo.java}:
+\lstinputlisting{MultiAlmacenMon.todo.java}
+
+El programa principal para probar este ejercicio es el
+\url{CC_09_PmultiCMon.java}: 
+\lstinputlisting{CC_09_PmultiCMon.java}
+
+\clearpage
+\section{Multibuffer con paso de mensajes}
+Se trata de resolver el problema anterior con paso de mensajes usando
+la librería
+JCSP\footnote{\url{http://www.cs.kent.ac.uk/projects/ofa/jcsp/}}.
+
+\subsubsection*{Material a entregar}
+El fichero fuente a entregar debe llamarse \url{MultiAlmacenJCSP.java}.
+
+\subsubsection*{Material de apoyo}%
+Se ofrece un esqueleto de código que el alumno debe completar en el fichero
+\url{MultiAlmacenJCSP.todo.java}:
+\lstinputlisting{MultiAlmacenJCSP.todo.java}
+
+El programa principal para probar este ejercicio es el
+\url{CC_10_PmultiJCSP.java}: 
+\lstinputlisting{CC_10_PmultiCJCSP.java}
+
+\end{document}
+
+\clearpage
+\section*{Especificación ControlAccesoPuente}
+
+\begin{ctadsol}
+  \nombrectad{ControlAccesoPuente}
+  \\
+  \operaciones
+  \operacion{Solicitar\_Entrada}{Entrada[e]}
+  \operacion{Avisar\_Salida}{Salida[e]}
+  \\
+  \semdom
+  \tipo{ControlAccesoPuente = (sn : \nat \por ns : \nat)}
+  \tiponl{Un contador para los coches que van sur-norte y otro para los que van norte-sur. Siempre uno debe ser 0.}
+  \donde{
+    $Entrada = EN | ES$\\
+    $Salida = SN | SS$\\
+  }
+  \invariante{$(\self.sn > 0 \implies \self.ns = 0)$\\
+    $\land (\self.ns > 0 \implies \self.sn = 0)$}
+  \\
+  \inicial{\self}{$\self.sn = 0 \land \self.ns = 0$}
+  \\
+  \cprenl{Si se entra por el sur no puede haber coches norte-sur, si se entra por el norte no puede haber coches sur-norte.}
+  \cpre{$e = ES \land \self.ns = 0 \lor e = EN \land \self.sn = 0$}
+  \nomop{Solicitar\_Entrada(e)}
+  \postnl{Incrementamos el número de coches en la dirección adecuada.}
+  \post{$e = ES \land \self.sn = \self.sn\ent + 1 \land \self.ns = \self.ns\ent$\\
+    $\lor e = EN \land \self.ns = \self.ns\ent + 1 \land \self.sn = \self.sn\ent$}
+  \\
+  \cprenl{Es imposible que esta operación sea ejecutada por culpa de un coche que no esté cruzando el puente por lo que siempre puede ser ejecutada.}
+  \cpre{$\cierto$}
+  \nomop{Avisar\_Salida(s)}
+  \postnl{Decrementamos el número de coches en la dirección adecuada.}
+  \post{$s = SS \land \self.sn = \self.sn\ent \land \self.ns = \self.ns\ent - 1$\\
+    $\lor s = SN \land \self.ns = \self.ns\ent \land \self.sn = \self.sn\ent - 1$}
+\end{ctadsol}
+
+
+\end{document}
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: t
+%%% TeX-PDF-mode: t
+%%% ispell-local-dictionary: "castellano"
+%%% End: 

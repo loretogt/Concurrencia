@@ -1,0 +1,11 @@
+\select@language {spanish}
+\contentsline {section}{\numberline {1}Creaci\IeC {\'o}n de threads en Java}{2}{section.1}
+\contentsline {section}{\numberline {2}Provocar una condici\IeC {\'o}n de carrera}{3}{section.2}
+\contentsline {section}{\numberline {3}Garantizar exclusi\IeC {\'o}n mutua con espera activa}{4}{section.3}
+\contentsline {section}{\numberline {4}Garantizar exclusi\IeC {\'o}n mutua con sem\IeC {\'a}foros}{7}{section.4}
+\contentsline {section}{\numberline {5}Almac\IeC {\'e}n de un dato con sem\IeC {\'a}foros}{10}{section.5}
+\contentsline {section}{\numberline {6}Almac\IeC {\'e}n de varios datos con sem\IeC {\'a}foros}{14}{section.6}
+\contentsline {section}{\numberline {7}Especificaci\IeC {\'o}n de un recurso compartido}{17}{section.7}
+\contentsline {section}{\numberline {8}Multibuffer con m\IeC {\'e}todos synchronized}{21}{section.8}
+\contentsline {section}{\numberline {9}Multibuffer con monitores}{25}{section.9}
+\contentsline {section}{\numberline {10}Multibuffer con paso de mensajes}{29}{section.10}
